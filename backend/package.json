@@ -3,15 +3,19 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "prisma migrate deploy && tsx src/index.ts",
+    "migrate:dev": "prisma migrate dev",
+    "generate": "prisma generate"
   },
   "dependencies": {
     "@hono/node-server": "^1.15.0",
-    "hono": "^4.8.4"
+    "@prisma/client": "^6.11.1",
+    "hono": "^4.8.4",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "prisma": "^6.11.1",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
