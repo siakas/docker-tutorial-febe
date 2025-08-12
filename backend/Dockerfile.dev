@@ -1,0 +1,23 @@
+FROM node:22-alpine
+
+# pnpmのインストール
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# package.jsonを先にコピー（キャッシュ効率化）
+COPY package.json pnpm-lock.yaml* ./
+
+# 依存関係のインストール
+RUN pnpm install --frozen-lockfile || pnpm install
+
+# アプリケーションコードをコピー
+COPY . .
+
+# Prismaクライアントの生成
+RUN pnpm prisma generate || echo "Prisma schema not yet available"
+
+EXPOSE 3001
+
+# 開発サーバーの起動
+CMD ["pnpm", "dev"]

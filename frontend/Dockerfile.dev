@@ -1,0 +1,23 @@
+# Node.js 公式イメージを使用（LTS版）
+FROM node:18-alpine
+
+# pnpm をグローバルインストール
+RUN npm install -g pnpm
+
+# 作業ディレクトリの設定
+WORKDIR /app
+
+# package.json と pnpm-lock.yaml をコピー（依存関係のキャッシュ最適化）
+COPY package.json pnpm-lock.yaml* ./
+
+# 依存関係のインストール
+RUN pnpm install
+
+# アプリケーションコードをコピー
+COPY . .
+
+# ポート 3000 を公開
+EXPOSE 3000
+
+# 開発サーバーの起動（ホットリロード対応）
+CMD ["pnpm", "dev"]

@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # バックエンドサービス
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: emp-backend
+    ports:
+      - "3001:3001" # ホスト:コンテナのポートマッピング
+    volumes:
+      - ./backend:/app # ホットリロード用のボリュームマウント
+      - /app/node_modules # node_modulesは除外
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:../database/dev.db
+    depends_on:
+      - db-init
+    networks:
+      - emp-network
+
+  # フロントエンドサービス
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: emp-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next # Next.jsのビルドキャッシュ除外
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - emp-network
+
+  # データベース初期化用サービス
+  db-init:
+    image: alpine:latest
+    container_name: emp-db-init
+    volumes:
+      - ./database:/database
+    command: >
+      sh -c "
+        mkdir -p /database &&
+        touch /database/dev.db &&
+        echo 'Database initialized'
+      "
+    networks:
+      - emp-network
+
+networks:
+  emp-network:
+    driver: bridge
+
+volumes:
+  database:
