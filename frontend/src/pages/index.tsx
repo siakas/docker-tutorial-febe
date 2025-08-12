@@ -1,104 +1,70 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div
-      className={`grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-sans sm:p-20`}
-    >
-      <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-center font-mono text-sm/6 sm:text-left">
-          <li className="mb-2 text-6xl tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-mono font-semibold dark:bg-white/[.06]">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-10 items-center justify-center gap-2 rounded-full border border-solid border-transparent px-4 text-sm font-medium transition-colors hover:bg-[#383838] sm:h-12 sm:w-auto sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="flex h-10 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm font-medium transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:w-auto sm:px-5 sm:text-base md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex flex-wrap items-center justify-center gap-[24px]">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-4xl px-6 py-16">
+        <header className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+            社員管理システム
+          </h1>
+          <p className="mt-6 text-lg text-gray-600">
+            フルスタック学習プロジェクト -
+            三層アーキテクチャで構築する現代的なWebアプリケーション
+          </p>
+        </header>
+
+        <main className="mt-16">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-lg bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900">社員管理</h3>
+              <p className="mt-2 text-gray-600">
+                社員情報の登録、編集、削除機能。検索・フィルタリングにも対応。
+              </p>
+            </div>
+
+            <div className="rounded-lg bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900">部署管理</h3>
+              <p className="mt-2 text-gray-600">
+                部署情報の管理と社員との関連付け機能。
+              </p>
+            </div>
+
+            <div className="rounded-lg bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900">
+                ダッシュボード
+              </h3>
+              <p className="mt-2 text-gray-600">
+                統計情報の表示とデータの可視化機能。
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              技術スタック
+            </h2>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="text-center">
+                <h4 className="font-medium text-gray-900">フロントエンド</h4>
+                <p className="mt-1 text-sm text-gray-600">
+                  Next.js, Tailwind CSS
+                </p>
+              </div>
+              <div className="text-center">
+                <h4 className="font-medium text-gray-900">バックエンド</h4>
+                <p className="mt-1 text-sm text-gray-600">Node.js, Hono</p>
+              </div>
+              <div className="text-center">
+                <h4 className="font-medium text-gray-900">データベース</h4>
+                <p className="mt-1 text-sm text-gray-600">SQLite, Prisma</p>
+              </div>
+              <div className="text-center">
+                <h4 className="font-medium text-gray-900">インフラ</h4>
+                <p className="mt-1 text-sm text-gray-600">Docker</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
