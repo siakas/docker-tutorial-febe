@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 部署テーブル
+model Department {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  employees   Employee[] // 一対多のリレーション
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// 社員テーブル
+model Employee {
+  id           Int        @id @default(autoincrement())
+  employeeId   String     @unique // 社員番号
+  firstName    String // 名
+  lastName     String // 姓
+  email        String     @unique
+  phoneNumber  String? // NULL許可
+  position     String // 役職
+  salary       Decimal? // 給与（NULL許可）
+  hireDate     DateTime // 入社日
+  departmentId Int // 外部キー
+  department   Department @relation(fields: [departmentId], references: [id])
+  isActive     Boolean    @default(true) // 在籍状況
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
