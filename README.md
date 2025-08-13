@@ -37,7 +37,7 @@
 
 ### インフラ・開発環境
 
-- **コンテナ管理**: Docker、docker-compose
+- **コンテナ管理**: Docker、docker compose
 
 ## 🚀 クイックスタート
 
@@ -65,7 +65,7 @@
    ./setup.sh
 
    # Docker Composeでサービスを起動
-   docker-compose up --build
+   docker compose up --build
    ```
 
 ブラウザで以下にアクセスして確認：
@@ -83,7 +83,7 @@
 ### 開発環境の停止
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## 🐳 Docker Compose 開発コマンド
@@ -92,83 +92,83 @@ docker-compose down
 
 ```bash
 # サービスをバックグラウンドで起動
-docker-compose up -d
+docker compose up -d
 
 # サービスをフォアグラウンドで起動（ログ表示）
-docker-compose up
+docker compose up
 
 # 特定のサービスのみ起動
-docker-compose up -d backend
-docker-compose up -d frontend
+docker compose up -d backend
+docker compose up -d frontend
 
 # サービスの停止
-docker-compose down
+docker compose down
 
 # サービスの停止（ボリュームも削除）
-docker-compose down -v
+docker compose down -v
 
 # サービスの再起動
-docker-compose restart
+docker compose restart
 
 # 特定のサービスのみ再起動
-docker-compose restart backend
+docker compose restart backend
 ```
 
 ### ログとデバッグ
 
 ```bash
 # 全サービスのログを表示
-docker-compose logs
+docker compose logs
 
 # 特定のサービスのログを表示
-docker-compose logs backend
-docker-compose logs frontend
+docker compose logs backend
+docker compose logs frontend
 
 # リアルタイムでログを追跡
-docker-compose logs -f
+docker compose logs -f
 
 # 特定のサービスのリアルタイムログ
-docker-compose logs -f backend
+docker compose logs -f backend
 ```
 
 ### コンテナ管理
 
 ```bash
 # 実行中のサービス一覧
-docker-compose ps
+docker compose ps
 
 # サービスの状態確認
-docker-compose top
+docker compose top
 
 # コンテナ内でコマンド実行
-docker-compose exec backend sh
-docker-compose exec frontend sh
+docker compose exec backend sh
+docker compose exec frontend sh
 
 # 新しいコンテナでコマンド実行
-docker-compose run backend pnpm install
-docker-compose run frontend pnpm build
+docker compose run backend pnpm install
+docker compose run frontend pnpm build
 ```
 
 ### ビルドとクリーンアップ
 
 ```bash
 # イメージを再ビルド
-docker-compose build
+docker compose build
 
 # 特定のサービスのみ再ビルド
-docker-compose build backend
+docker compose build backend
 
 # キャッシュを使わずに再ビルド
-docker-compose build --no-cache
+docker compose build --no-cache
 
 # サービスを停止してイメージを再ビルドしてから起動
-docker-compose up -d --build
+docker compose up -d --build
 
 # 未使用のイメージ、コンテナ、ネットワークを削除
 docker system prune -f
 
 # 全てのボリュームを削除（注意：データが失われます）
-docker-compose down -v
+docker compose down -v
 docker volume prune -f
 ```
 
@@ -178,26 +178,26 @@ docker volume prune -f
 # 1. 初回セットアップ
 chmod +x setup.sh
 ./setup.sh
-docker-compose up -d
+docker compose up -d
 
 # 2. 日常の開発開始
-docker-compose up -d
-docker-compose logs -f
+docker compose up -d
+docker compose logs -f
 
 # 3. コードの変更後（ホットリロード対応済み）
 # 何もする必要なし - 自動的に反映される
 
 # 4. 依存関係の追加時
-docker-compose exec backend pnpm install
-docker-compose restart backend
+docker compose exec backend pnpm install
+docker compose restart backend
 
 # 5. トラブルシューティング時
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 
 # 6. 開発終了時
-docker-compose down
+docker compose down
 ```
 
 ## 📁 プロジェクト構成
@@ -206,7 +206,7 @@ docker-compose down
 docker-tutorial-febe/
 ├── README.md                    # プロジェクト概要
 ├── CLAUDE.md                    # 詳細な仕様書
-├── docker-compose.yml           # Docker設定
+├── docker compose.yml           # Docker設定
 ├── setup.sh                     # 初期セットアップスクリプト
 ├── frontend/                    # Next.js フロントエンド
 │   ├── Dockerfile.dev
