@@ -14,9 +14,7 @@ services:
       - /app/node_modules # node_modulesは除外
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=file:../database/dev.db
-    depends_on:
-      - db-init
+      - DATABASE_URL=file:./prisma/dev.db # Prismaの標準的なデータベースパス
     networks:
       - emp-network
 
@@ -40,24 +38,6 @@ services:
     networks:
       - emp-network
 
-  # データベース初期化用サービス
-  db-init:
-    image: alpine:latest
-    container_name: emp-db-init
-    volumes:
-      - ./database:/database
-    command: >
-      sh -c "
-        mkdir -p /database &&
-        touch /database/dev.db &&
-        echo 'Database initialized'
-      "
-    networks:
-      - emp-network
-
 networks:
   emp-network:
     driver: bridge
-
-volumes:
-  database:

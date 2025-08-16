@@ -19,5 +19,5 @@ RUN pnpm prisma generate || echo "Prisma schema not yet available"
 
 EXPOSE 3001
 
-# 開発サーバーの起動
-CMD ["pnpm", "dev"]
+# データベース初期化とサーバー起動を一度に実行
+CMD ["sh", "-c", "pnpm prisma migrate dev --name init || true && pnpm seed || true && pnpm dev"]
