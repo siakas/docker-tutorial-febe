@@ -44,11 +44,11 @@ async function main() {
     // 営業部
     prisma.employee.create({
       data: {
-        employeeId: "EMP001",
+        employeeId: "EMP000001",
         firstName: "太郎",
         lastName: "山田",
         email: "yamada.taro@example.com",
-        phoneNumber: "090-1234-5678",
+        phoneNumber: "09012345678",
         position: "営業部長",
         salary: 8000000,
         hireDate: new Date("2015-04-01"),
@@ -57,11 +57,11 @@ async function main() {
     }),
     prisma.employee.create({
       data: {
-        employeeId: "EMP002",
+        employeeId: "EMP000002",
         firstName: "花子",
         lastName: "佐藤",
         email: "sato.hanako@example.com",
-        phoneNumber: "090-2345-6789",
+        phoneNumber: "09023456789",
         position: "営業主任",
         salary: 5500000,
         hireDate: new Date("2018-04-01"),
@@ -71,11 +71,11 @@ async function main() {
     // 開発部
     prisma.employee.create({
       data: {
-        employeeId: "EMP003",
+        employeeId: "EMP000003",
         firstName: "次郎",
         lastName: "鈴木",
         email: "suzuki.jiro@example.com",
-        phoneNumber: "090-3456-7890",
+        phoneNumber: "09034567890",
         position: "テックリード",
         salary: 7500000,
         hireDate: new Date("2016-10-01"),
@@ -84,11 +84,11 @@ async function main() {
     }),
     prisma.employee.create({
       data: {
-        employeeId: "EMP004",
+        employeeId: "EMP000004",
         firstName: "美咲",
         lastName: "田中",
         email: "tanaka.misaki@example.com",
-        phoneNumber: "090-4567-8901",
+        phoneNumber: "09045678901",
         position: "シニアエンジニア",
         salary: 6500000,
         hireDate: new Date("2019-04-01"),
@@ -97,7 +97,7 @@ async function main() {
     }),
     prisma.employee.create({
       data: {
-        employeeId: "EMP005",
+        employeeId: "EMP000005",
         firstName: "健太",
         lastName: "渡辺",
         email: "watanabe.kenta@example.com",
@@ -110,11 +110,11 @@ async function main() {
     // 人事部
     prisma.employee.create({
       data: {
-        employeeId: "EMP006",
+        employeeId: "EMP000006",
         firstName: "由美",
         lastName: "伊藤",
         email: "ito.yumi@example.com",
-        phoneNumber: "090-5678-9012",
+        phoneNumber: "09056789012",
         position: "人事部長",
         salary: 7000000,
         hireDate: new Date("2017-04-01"),
@@ -123,7 +123,7 @@ async function main() {
     }),
     prisma.employee.create({
       data: {
-        employeeId: "EMP007",
+        employeeId: "EMP000007",
         firstName: "大輔",
         lastName: "高橋",
         email: "takahashi.daisuke@example.com",
@@ -136,11 +136,11 @@ async function main() {
     // 経理部
     prisma.employee.create({
       data: {
-        employeeId: "EMP008",
+        employeeId: "EMP000008",
         firstName: "真理子",
         lastName: "小林",
         email: "kobayashi.mariko@example.com",
-        phoneNumber: "090-6789-0123",
+        phoneNumber: "09067890123",
         position: "経理部長",
         salary: 7200000,
         hireDate: new Date("2016-04-01"),
@@ -149,7 +149,7 @@ async function main() {
     }),
     prisma.employee.create({
       data: {
-        employeeId: "EMP009",
+        employeeId: "EMP000009",
         firstName: "翔太",
         lastName: "加藤",
         email: "kato.shota@example.com",
@@ -162,7 +162,7 @@ async function main() {
     // 非アクティブな社員
     prisma.employee.create({
       data: {
-        employeeId: "EMP010",
+        employeeId: "EMP000010",
         firstName: "隆",
         lastName: "吉田",
         email: "yoshida.takashi@example.com",

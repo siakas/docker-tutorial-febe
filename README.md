@@ -22,7 +22,6 @@
 - **UIコンポーネント**: shadcn/ui
 - **アイコン**: Lucide React
 - **バリデーション**: React Hook Form、Zod
-- **単体テスト**: Vitest
 - **静的解析/フォーマット**: ESLint、Prettier
 - **パッケージマネージャー**: pnpm
 
@@ -49,6 +48,7 @@
 
 - Docker および Docker Compose がインストールされていること
 - Node.js 22 以上がインストールされていること（ローカル開発の場合）
+- pnpm がインストールされていること
 
 ### 環境構築
 
@@ -94,6 +94,7 @@ docker-tutorial-febe/
 ├── CLAUDE.md                    # 詳細な仕様書
 ├── docker-compose.yml           # Docker設定
 ├── setup.sh                     # 初期セットアップスクリプト
+├── package.json                 # ルートパッケージ設定
 ├── frontend/                    # Next.js フロントエンド
 │   ├── Dockerfile.dev           # 開発用Docker設定
 │   ├── package.json
@@ -121,13 +122,14 @@ docker-tutorial-febe/
 │   │   │   └── employee.ts      # 社員スキーマ
 │   │   ├── routes/              # APIエンドポイント
 │   │   │   ├── department.ts    # 部署管理API（完全実装）
-│   │   │   └── employee.ts      # 社員管理API（一覧のみ実装）
+│   │   │   └── employee.ts      # 社員管理API（完全実装）
 │   │   └── test-prisma.ts       # Prisma操作テスト
 │   └── prisma/
 │       ├── schema.prisma        # データベーススキーマ定義
 │       ├── seed.ts              # 初期データ投入スクリプト
 │       ├── dev.db               # SQLite データベースファイル
 │       └── migrations/          # マイグレーション履歴
+└── database/                    # データベース関連（空ディレクトリ）
 ```
 
 ## 🔧 実装済み機能
@@ -142,17 +144,22 @@ docker-tutorial-febe/
 - **PUT /api/departments/:id** - 部署更新
 - **DELETE /api/departments/:id** - 部署削除（参照整合性チェック付き）
 
-#### 社員管理 API (`/api/employees`) - 🔄 部分実装
+#### 社員管理 API (`/api/employees`) - ✅ 完全実装
 
-- **GET /api/employees** - 社員一覧取得（検索・フィルタリング・ページネーション） ✅
-  - 部署フィルタリング
-  - 在籍状況フィルタリング
-  - 名前・メール・社員IDでの部分一致検索
-  - ページネーション（page/limit）
-- **POST /api/employees** - 社員作成 ❌
-- **GET /api/employees/:id** - 社員詳細取得 ❌
-- **PUT /api/employees/:id** - 社員更新 ❌
-- **DELETE /api/employees/:id** - 社員削除 ❌
+- **GET /api/employees** - 社員一覧取得（検索・フィルタリング・ページネーション）
+  - 部署フィルタリング（`departmentId`パラメータ）
+  - 在籍状況フィルタリング（`isActive`パラメータ）
+  - 名前・メール・社員IDでの部分一致検索（`search`パラメータ）
+  - ページネーション（`page`/`limit`パラメータ）
+- **GET /api/employees/:id** - 社員詳細取得（部署情報含む）
+- **POST /api/employees** - 社員作成（Zodバリデーション・部署存在チェック付き）
+- **PUT /api/employees/:id** - 社員更新（部分更新対応・部署存在チェック付き）
+- **DELETE /api/employees/:id** - 社員削除（論理削除・物理削除両対応）
+  - デフォルト：論理削除（`isActive=false`）
+  - `?hard=true`：物理削除（完全削除）
+- **GET /api/employees/stats/summary** - 社員統計情報取得
+  - 総社員数、有効社員数、無効社員数
+  - 部署別社員数統計
 
 #### 共通機能
 
@@ -163,6 +170,7 @@ docker-tutorial-febe/
   - Prismaデータベースエラー
   - カスタムAPIエラー
 - ✅ 日本語エラーメッセージ
+- ✅ 詳細なコードコメント（日本語）
 
 ### フロントエンド
 
@@ -347,43 +355,6 @@ docker compose down -v
 docker volume prune -f
 ```
 
-## 🚧 開発の次のステップ
-
-### 優先度：高
-
-1. **社員管理API完成** - 残りのCRUD操作実装
-   - POST /api/employees（社員作成）
-   - GET /api/employees/:id（社員詳細取得）
-   - PUT /api/employees/:id（社員更新）
-   - DELETE /api/employees/:id（社員削除）
-
-2. **フロントエンド-バックエンド連携** - 実際のAPIとの接続
-   - TanStack Query導入
-   - APIクライアント実装
-
-### 優先度：中
-
-3. **社員管理画面実装**
-   - 社員一覧ページ
-   - 社員詳細ページ
-   - 社員作成・編集フォーム
-
-4. **部署管理画面実装**
-   - 部署一覧ページ
-   - 部署詳細ページ
-   - 部署作成・編集フォーム
-
-### 優先度：低
-
-5. **テスト実装**
-   - ユニットテスト（Vitest）
-   - API統合テスト
-   - E2Eテスト
-
-6. **認証機能**（将来拡張）
-   - ログイン・セッション管理
-   - 権限ベースアクセス制御
-
 ## 🧪 テストとデバッグ
 
 ### データベースのテスト実行
@@ -408,6 +379,8 @@ cd backend && pnpm tsx src/test-prisma.ts
 
 ### APIテスト
 
+#### 基本動作確認
+
 ```bash
 # ヘルスチェック
 curl http://localhost:3001/health
@@ -415,13 +388,62 @@ curl http://localhost:3001/health
 # 部署一覧取得
 curl http://localhost:3001/api/departments
 
-# 社員一覧取得（検索・フィルタリング）
-curl "http://localhost:3001/api/employees?departmentId=1&search=田中&page=1&limit=5"
+# 社員一覧取得（基本）
+curl http://localhost:3001/api/employees
 
+# 社員統計情報取得
+curl http://localhost:3001/api/employees/stats/summary
+```
+
+#### 社員管理API
+
+```bash
+# 社員一覧取得（検索・フィルタリング・ページネーション）
+curl "http://localhost:3001/api/employees?departmentId=1&search=田中&page=1&limit=5&isActive=true"
+
+# 社員詳細取得
+curl http://localhost:3001/api/employees/1
+
+# 社員作成
+curl -X POST http://localhost:3001/api/employees \
+  -H "Content-Type: application/json" \
+  -d '{
+    "employeeId": "EMP999999",
+    "firstName": "太郎",
+    "lastName": "テスト",
+    "email": "test@example.com",
+    "position": "エンジニア",
+    "departmentId": 1,
+    "hireDate": "2024-01-15"
+  }'
+
+# 社員更新（部分更新）
+curl -X PUT http://localhost:3001/api/employees/1 \
+  -H "Content-Type: application/json" \
+  -d '{"position": "シニアエンジニア", "departmentId": 2}'
+
+# 社員削除（論理削除）
+curl -X DELETE http://localhost:3001/api/employees/1
+
+# 社員削除（物理削除）
+curl -X DELETE "http://localhost:3001/api/employees/1?hard=true"
+```
+
+#### 部署管理API
+
+```bash
 # 部署作成
 curl -X POST http://localhost:3001/api/departments \
   -H "Content-Type: application/json" \
   -d '{"name":"新規部署","description":"テスト部署"}'
+
+# 部署更新
+curl -X PUT http://localhost:3001/api/departments/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"更新部署","description":"更新されたテスト部署"}'
+
+# 部署削除
+curl -X DELETE http://localhost:3001/api/departments/1
 ```
 
 ### ログの確認
@@ -441,8 +463,8 @@ docker compose logs -f frontend
 
 1. **環境構築** - Docker環境とプロジェクト初期化 ✅
 2. **データベース設計** - Prismaスキーマ定義とマイグレーション ✅
-3. **バックエンドAPI開発** - Honoを使ったRESTful API実装 🔄（進行中）
-4. **フロントエンド開発** - Next.jsでのUI実装 ❌
+3. **バックエンドAPI開発** - Honoを使ったRESTful API実装 ✅
+4. **フロントエンド開発** - Next.jsでのUI実装 🔄（次のステップ）
 5. **統合テスト** - フロントエンドとバックエンドの連携確認 ❌
 
 ### 日常の開発ワークフロー
@@ -466,13 +488,43 @@ docker compose exec backend pnpm prisma:migrate
 docker compose down
 ```
 
-### 重要な学習ポイント
+## 🚧 開発の次のステップ
 
-- **三層アーキテクチャ**の各層の役割と責任
-- **RESTful API**の設計原則
-- **データベース正規化**とリレーション設計
-- **Docker**によるコンテナ化のメリット
-- **型安全性**を活かした開発（TypeScript + Zod + Prisma）
+### 優先度：高
+
+1. **フロントエンド-バックエンド連携** - 実際のAPIとの接続
+   - TanStack Query導入
+   - APIクライアント実装
+   - 環境変数設定
+
+2. **社員管理画面実装**
+   - 社員一覧ページ（検索・フィルタリング・ページネーション対応）
+   - 社員詳細ページ
+   - 社員作成・編集フォーム（React Hook Form + Zod）
+
+### 優先度：中
+
+3. **部署管理画面実装**
+   - 部署一覧ページ
+   - 部署詳細ページ（所属社員一覧含む）
+   - 部署作成・編集フォーム
+
+4. **統計ダッシュボード強化**
+   - 実際のAPIデータとの連携
+   - グラフ・チャートライブラリ導入
+   - リアルタイム更新機能
+
+### 優先度：低
+
+5. **テスト実装**
+   - バックエンドユニットテスト（Vitest）
+   - API統合テスト
+   - フロントエンドコンポーネントテスト
+   - E2Eテスト（Playwright）
+
+6. **認証機能**（将来拡張）
+   - ログイン・セッション管理
+   - 権限ベースアクセス制御
 
 ## 🔐 セキュリティ
 
@@ -487,6 +539,15 @@ docker compose down
 - **並列クエリ実行**（Promise.all活用）
 - **選択的フィールド取得**
 - **適切なインデックス設計**
+- **ページネーション実装**
+
+### 重要な学習ポイント
+
+- **三層アーキテクチャ**の各層の役割と責任
+- **RESTful API**の設計原則
+- **データベース正規化**とリレーション設計
+- **Docker**によるコンテナ化のメリット
+- **型安全性**を活かした開発（TypeScript + Zod + Prisma）
 
 ## 🤝 コントリビューション
 
