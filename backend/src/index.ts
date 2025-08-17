@@ -5,6 +5,7 @@ import { logger } from "hono/logger";
 
 // ルートのインポート
 import departmentRoute from "./routes/department";
+import employeeRoutes from "./routes/employee";
 
 const app = new Hono();
 
@@ -29,6 +30,7 @@ app.get("/health", (c) => {
 
 // API ルートの登録
 app.route("/api/departments", departmentRoute);
+app.route("/api/employees", employeeRoutes);
 
 // 404 ハンドリング
 app.notFound((c) => {
