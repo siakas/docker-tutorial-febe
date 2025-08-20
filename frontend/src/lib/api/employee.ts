@@ -15,7 +15,8 @@ import {
 export const fetchEmployees = async (): Promise<Employee[]> => {
   const response = await apiClient.get("/api/employees");
   // レスポンスデータの実行時型チェック
-  return z.array(employeeSchema).parse(response.data);
+  // return z.array(employeeSchema).parse(response.data.data);
+  return response.data.data;
 };
 
 /**
@@ -26,7 +27,7 @@ export const fetchEmployees = async (): Promise<Employee[]> => {
  */
 export const fetchEmployee = async (id: number): Promise<Employee> => {
   const response = await apiClient.get(`/api/employees/${id}`);
-  return employeeSchema.parse(response.data);
+  return employeeSchema.parse(response.data.data);
 };
 
 /**
@@ -39,7 +40,7 @@ export const createEmployee = async (
   data: EmployeeFormData,
 ): Promise<Employee> => {
   const response = await apiClient.post("/api/employees", data);
-  return employeeSchema.parse(response.data);
+  return employeeSchema.parse(response.data.data);
 };
 
 /**
@@ -54,7 +55,7 @@ export const updateEmployee = async (
   data: EmployeeFormData,
 ): Promise<Employee> => {
   const response = await apiClient.put(`/api/employees/${id}`, data);
-  return employeeSchema.parse(response.data);
+  return employeeSchema.parse(response.data.data);
 };
 
 /**
