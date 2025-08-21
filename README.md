@@ -20,7 +20,7 @@
 - **React**: v19.1.0
 - **CSS**: Tailwind CSS v4
 - **UIコンポーネント**: shadcn/ui
-- **アイコン**: Lucide React
+- **アイコン**: Lucide React v0.539.0
 - **データフェッチ/状態管理**: TanStack Query v5.85.3、Axios v1.11.0
 - **バリデーション**: Zod v4.0.17
 - **静的解析/フォーマット**: ESLint、Prettier
@@ -28,12 +28,12 @@
 
 ### バックエンド
 
-- **ランタイム**: Node.js 22
+- **ランタイム**: Node.js 22.17.0
 - **フレームワーク**: Hono v4.9.1
 - **データベース**: SQLite
 - **ORM**: Prisma v6.14.0
 - **バリデーション**: Zod v4.0.17
-- **ロギング**: Pino、hono/logger
+- **ロギング**: Pino v9.1.0、hono/logger
 - **APIスタイル**: RESTful API
 - **パッケージマネージャー**: pnpm
 
@@ -79,6 +79,7 @@
 
    - **フロントエンド**: http://localhost:3000
    - **社員一覧ページ**: http://localhost:3000/employees
+   - **社員詳細ページ**: http://localhost:3000/employees/[id]
    - **バックエンド API**: http://localhost:3001
    - **ヘルスチェック**: http://localhost:3001/health
 
@@ -104,7 +105,8 @@ docker-tutorial-febe/
 │   │   ├── pages/               # Pages Router
 │   │   │   ├── index.tsx        # ダッシュボード（実装済み）
 │   │   │   ├── employees/       # 社員管理ページ
-│   │   │   │   └── index.tsx    # 社員一覧（実装済み）
+│   │   │   │   ├── index.tsx    # 社員一覧（実装済み）
+│   │   │   │   └── [id].tsx     # 社員詳細（新規実装済み）
 │   │   │   ├── _app.tsx         # TanStack Query設定
 │   │   │   ├── _document.tsx
 │   │   │   └── api/hello.ts
@@ -112,6 +114,8 @@ docker-tutorial-febe/
 │   │   │   └── useEmployees.ts  # 社員データ取得フック
 │   │   ├── components/          # 共通コンポーネント
 │   │   │   └── ui/              # shadcn/ui コンポーネント
+│   │   │       ├── button.tsx   # Buttonコンポーネント
+│   │   │       └── card.tsx     # Cardコンポーネント
 │   │   ├── lib/                 # ライブラリ・設定
 │   │   │   ├── api/             # API クライアント
 │   │   │   │   ├── client.ts    # Axios設定
@@ -119,6 +123,9 @@ docker-tutorial-febe/
 │   │   │   ├── validations/     # Zod スキーマ
 │   │   │   │   └── employee.ts  # 社員バリデーション
 │   │   │   └── utils.ts         # ユーティリティ関数
+│   │   ├── utils/               # ユーティリティ関数（新規）
+│   │   │   ├── formatDate.ts    # 日付フォーマット
+│   │   │   └── formatSalary.ts  # 給与フォーマット
 │   │   └── styles/globals.css   # グローバルスタイル
 │   ├── components.json          # shadcn/ui設定
 │   └── next.config.ts           # Next.js設定
@@ -188,23 +195,49 @@ docker-tutorial-febe/
 
 ### フロントエンド
 
-- ✅ **ダッシュボード実装**（モックデータ）
+#### 実装済みページ
+
+- ✅ **ダッシュボード**（`/`）- モックデータベース統計表示
   - 統計カード表示
   - 部署別社員数グラフ
   - 最近の活動履歴
   - クイックアクションボタン
-- ✅ **レスポンシブデザイン**（Tailwind CSS）
-- ✅ **shadcn/ui設定済み**
-- ✅ **社員管理ページ** - カード形式での一覧表示
-  - 社員一覧表示（TanStack Query使用）
-  - 社員詳細・編集ボタン
-  - 新規登録ボタン
+
+- ✅ **社員一覧ページ**（`/employees`）- API連携済み
+  - カード形式での社員情報表示
+  - TanStack Queryによるデータフェッチ
+  - リアルタイムデータ更新
   - エラーハンドリング
-- ❌ 部署管理ページ
+
+- ✅ **社員詳細ページ**（`/employees/[id]`）- **新規実装**
+  - 動的ルーティングによる個別社員詳細表示
+  - 包括的な社員情報表示（基本情報、連絡先、部署、給与など）
+  - shadcn/ui コンポーネント使用
+  - レスポンシブデザイン
+  - アクションボタン（編集、複製、削除）※UI のみ
+  - ステータスバー（在籍/退職表示）
+
+#### UI/UX機能
+
+- ✅ **レスポンシブデザイン**（Tailwind CSS v4）
+- ✅ **shadcn/ui設定済み**（Button、Cardコンポーネント）
+- ✅ **アイコンライブラリ**（Lucide React）
+- ✅ **データフォーマット機能**
+  - 日付の日本語表示（`formatDate.ts`）
+  - 日本円の通貨表示（`formatSalary.ts`）
+
+#### 技術的実装
+
 - ✅ **実際のAPIとの連携**
   - TanStack Query導入済み
   - AxiosベースのAPIクライアント
   - Zodによる型安全なデータフェッチ
+- ✅ **型安全性の確保**
+  - TypeScript strict mode
+  - カスタムフック（`useEmployees`）
+- ✅ **エラーハンドリング**
+  - API接続エラーの適切な表示
+  - ローディング状態の管理
 
 ### データベース
 
@@ -228,20 +261,20 @@ model Department {
 
 // 社員テーブル
 model Employee {
-  id           Int         @id @default(autoincrement())
-  employeeId   String      @unique // 社員番号（EMP123456形式）
-  firstName    String      // 名
-  lastName     String      // 姓
-  email        String      @unique
-  phoneNumber  String?     // NULL許可
-  position     String      // 役職
-  salary       Decimal?    // 給与（NULL許可）
-  hireDate     DateTime    // 入社日
-  departmentId Int         // 外部キー
-  department   Department  @relation(fields: [departmentId], references: [id])
-  isActive     Boolean     @default(true) // 在籍状況
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id           Int        @id @default(autoincrement())
+  employeeId   String     @unique // 社員番号（EMP123456形式）
+  firstName    String     // 名
+  lastName     String     // 姓
+  email        String     @unique
+  phoneNumber  String?    // NULL許可
+  position     String     // 役職
+  salary       Decimal?   // 給与（NULL許可）
+  hireDate     DateTime   // 入社日
+  departmentId Int        // 外部キー
+  department   Department @relation(fields: [departmentId], references: [id])
+  isActive     Boolean    @default(true) // 在籍状況
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 ```
 
@@ -425,6 +458,9 @@ open http://localhost:3000
 # 社員一覧ページ（API連携済み）
 open http://localhost:3000/employees
 
+# 社員詳細ページ（新規実装）
+open http://localhost:3000/employees/1
+
 # API接続確認 - 開発者ツールのNetwork タブでAPI呼び出しを確認可能
 ```
 
@@ -497,8 +533,8 @@ docker compose logs -f frontend
 1. **環境構築** - Docker環境とプロジェクト初期化 ✅
 2. **データベース設計** - Prismaスキーマ定義とマイグレーション ✅
 3. **バックエンドAPI開発** - Honoを使ったRESTful API実装 ✅
-4. **フロントエンド開発** - Next.jsでのUI実装 🔄（社員一覧完了、詳細・編集フォーム未完了）
-5. **統合テスト** - フロントエンドとバックエンドの連携確認 🔄（社員一覧のみ完了）
+4. **フロントエンド開発** - Next.jsでのUI実装 🔄（社員詳細完了、編集フォーム等は未完了）
+5. **統合テスト** - フロントエンドとバックエンドの連携確認 🔄（表示系は完了、更新系は未完了）
 
 ### 日常の開発ワークフロー
 
@@ -525,33 +561,36 @@ docker compose down
 
 ### 優先度：高
 
-1. **社員管理機能の拡張** - 基本実装は完了済み
-   - 社員詳細ページの実装
-   - 社員作成・編集フォーム（React Hook Form + Zod）
-   - 検索・フィルタリング機能
-   - ページネーション機能
+1. **社員管理機能の拡張** - 表示機能は完了済み
+   - ✅ 社員詳細ページの実装（完了）
+   - ❌ 社員作成・編集フォーム（React Hook Form + Zod）
+   - ❌ 検索・フィルタリング機能のUI実装
+   - ❌ ページネーション機能のUI実装
+
+2. **バグ修正**
+   - 社員詳細ページのローディング状態の return 文修正
 
 ### 優先度：中
 
-2. **部署管理画面実装**
+3. **部署管理画面実装**
    - 部署一覧ページ
    - 部署詳細ページ（所属社員一覧含む）
    - 部署作成・編集フォーム
 
-3. **統計ダッシュボード強化**
+4. **統計ダッシュボード強化**
    - 実際のAPIデータとの連携
    - グラフ・チャートライブラリ導入
    - リアルタイム更新機能
 
 ### 優先度：低
 
-4. **テスト実装**
+5. **テスト実装**
    - バックエンドユニットテスト（Vitest）
    - API統合テスト
    - フロントエンドコンポーネントテスト
    - E2Eテスト（Playwright）
 
-5. **認証機能**（将来拡張）
+6. **認証機能**（将来拡張）
    - ログイン・セッション管理
    - 権限ベースアクセス制御
 
@@ -601,3 +640,4 @@ docker compose down
 - [Zod Documentation](https://zod.dev/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [shadcn/ui Documentation](https://ui.shadcn.com/)
+- [TanStack Query Documentation](https://tanstack.com/query/latest)
