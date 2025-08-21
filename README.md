@@ -18,12 +18,14 @@
 
 - **フレームワーク**: Next.js 15.4.6（Pages Router）
 - **React**: v19.1.0
-- **CSS**: Tailwind CSS v4
-- **UIコンポーネント**: shadcn/ui
+- **TypeScript**: v5.9.2（Strict Mode）
+- **CSS**: Tailwind CSS v4.1.12
+- **UIコンポーネント**: shadcn/ui（Radix UI ベース）
 - **アイコン**: Lucide React v0.539.0
 - **データフェッチ/状態管理**: TanStack Query v5.85.3、Axios v1.11.0
 - **バリデーション**: Zod v4.0.17
-- **静的解析/フォーマット**: ESLint、Prettier
+- **テスト**: Vitest v3.2.4、@testing-library/react v16.3.0、JSDOM v26.1.0
+- **静的解析/フォーマット**: ESLint v9.33.0、Prettier
 - **パッケージマネージャー**: pnpm
 
 ### バックエンド
@@ -110,8 +112,7 @@ docker-tutorial-febe/
 │   │   │   ├── _app.tsx         # TanStack Query設定
 │   │   │   ├── _document.tsx
 │   │   │   └── api/hello.ts
-│   │   ├── hooks/               # カスタムフック
-│   │   │   └── useEmployees.ts  # 社員データ取得フック
+│   │   ├── test-setup.ts        # Vitestセットアップ（jest-dom設定）
 │   │   ├── components/          # 共通コンポーネント
 │   │   │   └── ui/              # shadcn/ui コンポーネント
 │   │   │       ├── button.tsx   # Buttonコンポーネント
@@ -125,9 +126,17 @@ docker-tutorial-febe/
 │   │   │   └── utils.ts         # ユーティリティ関数
 │   │   ├── utils/               # ユーティリティ関数（新規）
 │   │   │   ├── formatDate.ts    # 日付フォーマット
-│   │   │   └── formatSalary.ts  # 給与フォーマット
+│   │   │   ├── formatSalary.ts  # 給与フォーマット
+│   │   │   └── test/            # ユーティリティテスト
+│   │   │       ├── formatDate.test.ts    # 日付フォーマットのテスト
+│   │   │       └── formatSalary.test.ts  # 給与フォーマットのテスト
+│   │   ├── hooks/               # カスタムフック
+│   │   │   ├── useEmployees.ts  # 社員データ取得フック
+│   │   │   └── test/            # フックテスト
+│   │   │       └── useEmployees.test.tsx # 社員管理フックのテスト
 │   │   └── styles/globals.css   # グローバルスタイル
 │   ├── components.json          # shadcn/ui設定
+│   ├── vitest.config.ts         # Vitestテスト設定
 │   └── next.config.ts           # Next.js設定
 ├── backend/                     # Hono バックエンド
 │   ├── Dockerfile.dev           # 開発用Docker設定
@@ -150,7 +159,6 @@ docker-tutorial-febe/
 │       ├── seed.ts              # 初期データ投入スクリプト
 │       ├── dev.db               # SQLite データベースファイル
 │       └── migrations/          # マイグレーション履歴
-└── database/                    # データベース関連（空ディレクトリ）
 ```
 
 ## 🔧 実装済み機能
@@ -411,6 +419,40 @@ docker volume prune -f
 
 ## 🧪 テストとデバッグ
 
+### フロントエンドテスト（Vitest）
+
+**テスト実行環境**: Vitest + @testing-library/react + JSDOM
+
+```bash
+# フロントエンドディレクトリに移動
+cd frontend
+
+# 監視モードでテスト実行
+pnpm test
+
+# ワンショットでテスト実行
+pnpm test:run
+
+# UI モードでテスト実行
+pnpm test:ui
+```
+
+#### 実装済みテスト（33テスト）
+
+**1. ユーティリティ関数テスト**
+- `formatDate.test.ts`: 日付フォーマット（8テスト）
+- `formatSalary.test.ts`: 給与フォーマット（10テスト）
+
+**2. カスタムフックテスト**  
+- `useEmployees.test.tsx`: TanStack Query フック（15テスト）
+  - データ取得（useEmployees, useEmployee）
+  - データ変更（useCreateEmployee, useUpdateEmployee, useDeleteEmployee）
+  - エラーハンドリングとキャッシュ制御
+
+#### テスト設定ファイル
+- `vitest.config.ts`: Vitest設定（JSDOM、エイリアス設定）
+- `src/test-setup.ts`: jest-dom セットアップ
+
 ### データベースのテスト実行
 
 Prismaの基本操作をテストできるスクリプトが用意されています：
@@ -546,14 +588,18 @@ docker compose logs -f
 # 2. コードの変更（ホットリロード対応済み）
 # 何もする必要なし - 自動的に反映される
 
-# 3. 依存関係の追加時
+# 3. テストの実行
+cd frontend && pnpm test  # フロントエンドテスト
+docker compose exec backend tsx src/test-prisma.ts  # データベーステスト
+
+# 4. 依存関係の追加時
 docker compose exec backend pnpm install
 docker compose restart backend
 
-# 4. データベーススキーマ変更時
+# 5. データベーススキーマ変更時
 docker compose exec backend pnpm prisma:migrate
 
-# 5. 開発終了時
+# 6. 開発終了時
 docker compose down
 ```
 
@@ -584,11 +630,13 @@ docker compose down
 
 ### 優先度：低
 
-5. **テスト実装**
-   - バックエンドユニットテスト（Vitest）
-   - API統合テスト
-   - フロントエンドコンポーネントテスト
-   - E2Eテスト（Playwright）
+5. **テスト実装の拡張** - 基礎テストは実装済み（33テスト）
+   - ✅ ユーティリティ関数テスト（formatDate, formatSalary）
+   - ✅ カスタムフックテスト（useEmployees 関連）
+   - ❌ Reactコンポーネントテスト（Button, Card 等のUIコンポーネント）
+   - ❌ バックエンドユニットテスト（Vitest での API エンドポイント）
+   - ❌ API統合テスト
+   - ❌ E2Eテスト（Playwright）
 
 6. **認証機能**（将来拡張）
    - ログイン・セッション管理
@@ -603,11 +651,18 @@ docker compose down
 
 ## ⚡ パフォーマンス
 
-- **Prismaクライアントのシングルトンパターン**
-- **並列クエリ実行**（Promise.all活用）
-- **選択的フィールド取得**
-- **適切なインデックス設計**
-- **ページネーション実装**
+### フロントエンド
+- **TanStack Query**: 効率的なデータキャッシュとバックグラウンド更新
+- **Next.js 15 + Turbopack**: 高速な開発環境とホットリロード
+- **Tailwind CSS v4**: 最適化されたCSS生成
+- **型安全なAPI通信**: Zod + TypeScriptによる実行時検証
+
+### バックエンド
+- **Prismaクライアントのシングルトンパターン**: データベース接続の最適化
+- **並列クエリ実行**（Promise.all活用）: 複数データの効率的取得
+- **選択的フィールド取得**: 必要なデータのみの転送
+- **適切なインデックス設計**: 一意性制約とリレーション最適化
+- **ページネーション実装**: 大量データの分割取得
 
 ### 重要な学習ポイント
 
@@ -632,12 +687,24 @@ docker compose down
 
 ## 📚 参考資料
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Hono Documentation](https://hono.dev/)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [Docker Documentation](https://docs.docker.com/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- [Zod Documentation](https://zod.dev/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Documentation](https://ui.shadcn.com/)
-- [TanStack Query Documentation](https://tanstack.com/query/latest)
+### フレームワーク・ライブラリ
+- [Next.js Documentation](https://nextjs.org/docs) - React フレームワーク
+- [Hono Documentation](https://hono.dev/) - 高速な Web フレームワーク
+- [Prisma Documentation](https://www.prisma.io/docs) - TypeScript ORM
+- [TanStack Query Documentation](https://tanstack.com/query/latest) - データフェッチングライブラリ
+
+### 開発ツール
+- [Docker Documentation](https://docs.docker.com/) - コンテナ技術
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/) - 型安全な JavaScript
+- [Zod Documentation](https://zod.dev/) - TypeScript バリデーションライブラリ
+- [Vitest Documentation](https://vitest.dev/) - 高速テストランナー
+
+### UI/UX
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - ユーティリティ CSS
+- [shadcn/ui Documentation](https://ui.shadcn.com/) - Radix UI コンポーネント
+- [Lucide React](https://lucide.dev/) - アイコンライブラリ
+
+### テスト
+- [Testing Library Documentation](https://testing-library.com/) - React テストユーティリティ
+- [Jest DOM](https://github.com/testing-library/jest-dom) - DOM テストマッチャー
+- [Vitest UI](https://vitest.dev/guide/ui.html) - テスト UI インターフェース
