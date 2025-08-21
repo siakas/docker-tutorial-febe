@@ -19,5 +19,4 @@ RUN pnpm prisma generate || echo "Prisma schema not yet available"
 
 EXPOSE 3001
 
-# データベース初期化とサーバー起動を一度に実行
-CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm prisma db seed && pnpm dev"]
+CMD ["pnpm", "dev"]
