@@ -1,4 +1,4 @@
-import { formatDate } from "./formatDate";
+import { formatDate } from "../formatDate";
 
 describe("formatDate", () => {
   it("ISO 8601形式の日付文字列を日本語形式に変換する", () => {
