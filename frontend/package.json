@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
     "lib:update": "ncu --interactive --format group"
   },
   "dependencies": {
@@ -29,11 +32,14 @@
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@vitest/ui": "^3.2.4",
     "eslint": "^9.33.0",
     "eslint-config-next": "15.4.6",
+    "jsdom": "^26.1.0",
     "npm-check-updates": "^18.0.2",
     "tailwindcss": "^4.1.12",
     "tw-animate-css": "^1.3.6",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }
