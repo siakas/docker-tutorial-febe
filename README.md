@@ -21,7 +21,8 @@
 - **CSS**: Tailwind CSS v4
 - **UIコンポーネント**: shadcn/ui
 - **アイコン**: Lucide React
-- **バリデーション**: React Hook Form、Zod
+- **データフェッチ/状態管理**: TanStack Query v5.85.3、Axios v1.11.0
+- **バリデーション**: Zod v4.0.17
 - **静的解析/フォーマット**: ESLint、Prettier
 - **パッケージマネージャー**: pnpm
 
@@ -77,6 +78,7 @@
    ブラウザで以下にアクセスして確認：
 
    - **フロントエンド**: http://localhost:3000
+   - **社員一覧ページ**: http://localhost:3000/employees
    - **バックエンド API**: http://localhost:3001
    - **ヘルスチェック**: http://localhost:3001/health
 
@@ -101,11 +103,23 @@ docker-tutorial-febe/
 │   ├── src/
 │   │   ├── pages/               # Pages Router
 │   │   │   ├── index.tsx        # ダッシュボード（実装済み）
-│   │   │   ├── _app.tsx
+│   │   │   ├── employees/       # 社員管理ページ
+│   │   │   │   └── index.tsx    # 社員一覧（実装済み）
+│   │   │   ├── _app.tsx         # TanStack Query設定
 │   │   │   ├── _document.tsx
 │   │   │   └── api/hello.ts
-│   │   ├── lib/utils.ts         # ユーティリティ関数
-│   │   └── styles/globals.css
+│   │   ├── hooks/               # カスタムフック
+│   │   │   └── useEmployees.ts  # 社員データ取得フック
+│   │   ├── components/          # 共通コンポーネント
+│   │   │   └── ui/              # shadcn/ui コンポーネント
+│   │   ├── lib/                 # ライブラリ・設定
+│   │   │   ├── api/             # API クライアント
+│   │   │   │   ├── client.ts    # Axios設定
+│   │   │   │   └── employee.ts  # 社員API関数
+│   │   │   ├── validations/     # Zod スキーマ
+│   │   │   │   └── employee.ts  # 社員バリデーション
+│   │   │   └── utils.ts         # ユーティリティ関数
+│   │   └── styles/globals.css   # グローバルスタイル
 │   ├── components.json          # shadcn/ui設定
 │   └── next.config.ts           # Next.js設定
 ├── backend/                     # Hono バックエンド
@@ -181,9 +195,16 @@ docker-tutorial-febe/
   - クイックアクションボタン
 - ✅ **レスポンシブデザイン**（Tailwind CSS）
 - ✅ **shadcn/ui設定済み**
-- ❌ 社員管理ページ
+- ✅ **社員管理ページ** - カード形式での一覧表示
+  - 社員一覧表示（TanStack Query使用）
+  - 社員詳細・編集ボタン
+  - 新規登録ボタン
+  - エラーハンドリング
 - ❌ 部署管理ページ
-- ❌ 実際のAPIとの連携
+- ✅ **実際のAPIとの連携**
+  - TanStack Query導入済み
+  - AxiosベースのAPIクライアント
+  - Zodによる型安全なデータフェッチ
 
 ### データベース
 
@@ -395,6 +416,18 @@ curl http://localhost:3001/api/employees
 curl http://localhost:3001/api/employees/stats/summary
 ```
 
+#### フロントエンド動作確認
+
+```bash
+# ダッシュボードページ
+open http://localhost:3000
+
+# 社員一覧ページ（API連携済み）
+open http://localhost:3000/employees
+
+# API接続確認 - 開発者ツールのNetwork タブでAPI呼び出しを確認可能
+```
+
 #### 社員管理API
 
 ```bash
@@ -464,8 +497,8 @@ docker compose logs -f frontend
 1. **環境構築** - Docker環境とプロジェクト初期化 ✅
 2. **データベース設計** - Prismaスキーマ定義とマイグレーション ✅
 3. **バックエンドAPI開発** - Honoを使ったRESTful API実装 ✅
-4. **フロントエンド開発** - Next.jsでのUI実装 🔄（次のステップ）
-5. **統合テスト** - フロントエンドとバックエンドの連携確認 ❌
+4. **フロントエンド開発** - Next.jsでのUI実装 🔄（社員一覧完了、詳細・編集フォーム未完了）
+5. **統合テスト** - フロントエンドとバックエンドの連携確認 🔄（社員一覧のみ完了）
 
 ### 日常の開発ワークフロー
 
@@ -492,37 +525,33 @@ docker compose down
 
 ### 優先度：高
 
-1. **フロントエンド-バックエンド連携** - 実際のAPIとの接続
-   - TanStack Query導入
-   - APIクライアント実装
-   - 環境変数設定
-
-2. **社員管理画面実装**
-   - 社員一覧ページ（検索・フィルタリング・ページネーション対応）
-   - 社員詳細ページ
+1. **社員管理機能の拡張** - 基本実装は完了済み
+   - 社員詳細ページの実装
    - 社員作成・編集フォーム（React Hook Form + Zod）
+   - 検索・フィルタリング機能
+   - ページネーション機能
 
 ### 優先度：中
 
-3. **部署管理画面実装**
+2. **部署管理画面実装**
    - 部署一覧ページ
    - 部署詳細ページ（所属社員一覧含む）
    - 部署作成・編集フォーム
 
-4. **統計ダッシュボード強化**
+3. **統計ダッシュボード強化**
    - 実際のAPIデータとの連携
    - グラフ・チャートライブラリ導入
    - リアルタイム更新機能
 
 ### 優先度：低
 
-5. **テスト実装**
+4. **テスト実装**
    - バックエンドユニットテスト（Vitest）
    - API統合テスト
    - フロントエンドコンポーネントテスト
    - E2Eテスト（Playwright）
 
-6. **認証機能**（将来拡張）
+5. **認証機能**（将来拡張）
    - ログイン・セッション管理
    - 権限ベースアクセス制御
 
