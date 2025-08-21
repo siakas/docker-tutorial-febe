@@ -15,8 +15,7 @@ import {
 export const fetchEmployees = async (): Promise<Employee[]> => {
   const response = await apiClient.get("/api/employees");
   // レスポンスデータの実行時型チェック
-  // return z.array(employeeSchema).parse(response.data.data);
-  return response.data.data;
+  return z.array(employeeSchema).parse(response.data.data);
 };
 
 /**

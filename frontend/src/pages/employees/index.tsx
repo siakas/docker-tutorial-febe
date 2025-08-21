@@ -43,7 +43,7 @@ export default function EmployeesPage() {
         </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {employees && Array.isArray(employees) && employees.map((employee) => (
+        {employees?.map((employee) => (
           <Card key={employee.id}>
             <CardHeader>
               <CardTitle>
@@ -85,8 +85,8 @@ export default function EmployeesPage() {
             </CardContent>
           </Card>
         ))}
-        {employees && Array.isArray(employees) && employees.length === 0 && (
-          <div className="col-span-full text-center py-8">
+        {employees?.length === 0 && (
+          <div className="col-span-full py-8 text-center">
             <p className="text-gray-500">社員データが見つかりません</p>
           </div>
         )}

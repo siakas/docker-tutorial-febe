@@ -4,9 +4,9 @@ import z from "zod";
 export const departmentSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  description: z.string().nullable().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 // 社員のスキーマ
