@@ -102,7 +102,7 @@ export default function EmployeeDetailPage() {
                   </span>
                 </div>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">編集</Button>
+              <Button>編集</Button>
             </div>
           </div>
 
@@ -221,15 +221,11 @@ export default function EmployeeDetailPage() {
           {/* アクションボタン */}
           <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
             <div className="flex gap-3">
-              <button className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700">
-                編集する
-              </button>
-              <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">
-                複製する
-              </button>
-              <button className="ml-auto rounded-md border border-red-300 bg-white px-4 py-2 text-red-700 transition-colors hover:bg-red-50">
+              <Button>編集する</Button>
+              <Button variant="outline">複製する</Button>
+              <Button variant="destructive" className="ml-auto">
                 削除する
-              </button>
+              </Button>
             </div>
           </div>
         </div>
