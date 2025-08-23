@@ -29,13 +29,26 @@ export const employeeSchema = z.object({
 
 // 社員作成/更新用のスキーマ
 export const employeeFormSchema = z.object({
-  employeeId: z.string().min(1, "社員IDは必須です"),
-  firstName: z.string().min(1, "名は必須です"),
-  lastName: z.string().min(1, "姓は必須です"),
+  employeeId: z
+    .string()
+    .min(1, "社員IDは必須です")
+    .regex(/^EMP\d{6}$/, "社員IDは'EMP'で始まり6桁の数字である必要があります"),
+  firstName: z.string().min(1, "名は必須です").max(50),
+  lastName: z.string().min(1, "姓は必須です").max(50),
   email: z.email("有効なメールアドレスを入力してください"),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\d{10,11}$/.test(val), {
+      message: "電話番号は10桁または11桁の数字で入力してください",
+    }),
   position: z.string().min(1, "役職は必須です"),
-  salary: z.string().optional(),
+  salary: z
+    .string()
+    .optional()
+    .refine((val) => !val || !isNaN(Number(val)), {
+      message: "給与は数値で入力してください",
+    }),
   hireDate: z.string().min(1, "入社日は必須です"),
   departmentId: z.number().min(1, "部署は必須です"),
   isActive: z.boolean(),

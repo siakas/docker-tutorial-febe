@@ -156,7 +156,7 @@ export const EmployeeForm = ({
             <EmployeeFormInput
               {...register("phoneNumber")}
               type="tel"
-              placeholder="090-1234-5678"
+              placeholder="09012345678"
             />
             {errors.phoneNumber && (
               <p className="mt-1 text-sm text-red-500">

@@ -38,7 +38,14 @@ export const fetchEmployee = async (id: number): Promise<Employee> => {
 export const createEmployee = async (
   data: EmployeeFormData,
 ): Promise<Employee> => {
-  const response = await apiClient.post("/api/employees", data);
+  // バックエンドの形式に合わせてデータを変換
+  const transformedData = {
+    ...data,
+    salary: data.salary ? parseFloat(data.salary) : undefined,
+    hireDate: new Date(data.hireDate).toISOString(),
+  };
+
+  const response = await apiClient.post("/api/employees", transformedData);
   return employeeSchema.parse(response.data.data);
 };
 
@@ -53,7 +60,14 @@ export const updateEmployee = async (
   id: number,
   data: EmployeeFormData,
 ): Promise<Employee> => {
-  const response = await apiClient.put(`/api/employees/${id}`, data);
+  // バックエンドの形式に合わせてデータを変換
+  const transformedData = {
+    ...data,
+    salary: data.salary ? Number(data.salary) : undefined,
+    hireDate: new Date(data.hireDate).toISOString(),
+  };
+
+  const response = await apiClient.put(`/api/employees/${id}`, transformedData);
   return employeeSchema.parse(response.data.data);
 };
 
