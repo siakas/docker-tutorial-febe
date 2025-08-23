@@ -3,6 +3,8 @@ import { Loader2 } from "lucide-react";
 
 import { useDepartments } from "@/hooks/useDepartments";
 
+import { EmployeeForm } from "@/components/employee/EmployeeForm";
+
 export default function NewEmployeePage() {
   const router = useRouter();
 
@@ -40,6 +42,8 @@ export default function NewEmployeePage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-6 text-2xl font-bold">新規社員登録</h1>
+
+      <EmployeeForm departments={departments} />
 
       {departments && (
         <ul>
